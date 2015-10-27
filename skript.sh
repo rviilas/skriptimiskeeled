@@ -12,7 +12,7 @@ export LC_ALL=C
 if [ $UID -ne 0  ]
 then
     echo "Käivita skript $(basename $0) juurkasutaja õigustes"
-    return 1
+    exit 1
 fi
 
 
