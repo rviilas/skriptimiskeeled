@@ -10,7 +10,7 @@ export LC_ALL=C
 
 if [ $UID -ne 0  ]
 then
-    echo "Käivita skript $(basename $0) juurkasutaja õigustes"
+    echo "Käivita skript $(basename "$0") juurkasutaja õigustes"
     exit 1
 fi
 
@@ -41,7 +41,7 @@ dpkg -s samba > /dev/null 2>&1
 if [ $? -ne 0 ]
 then
     echo "Sambat ei ole masinasse installitud. Installin samba." 
-    apt-get update > /dev/null 2>&1 && apt-get install samba smbclient cifs-utils -y || echo "Samba install ebaõnnestus" && exit 1
+    apt-get update > /dev/null 2>&1 && apt-get install samba smbclient cifs-utils -y > /dev/null 2>&1 || { echo "Samba install ebaõnnestus" ; exit 1; }
 else
     echo "Samba on installitud."
 fi
@@ -52,7 +52,7 @@ fi
 if [ ! -d "$1" ]
 then
     echo "Loon kausta $1"
-    mkdir -p $1 || { echo "Kausta loomine ebaõnnestus!" ; exit 1; }
+    mkdir -p "$1" || { echo "Kausta loomine ebaõnnestus!" ; exit 1; }
 else
     echo "Kaust on juba olemas."
 fi
@@ -60,10 +60,10 @@ fi
 
 #Kontrollib kas kasutaja määratud grupp on juba olemas, kui ei ole siis loob selle grupi.
 
-getent group $2 > /dev/null 2>&1
+getent group "$2" > /dev/null 2>&1
 if [ $? -ne 0 ]
 then
-    addgroup --system $2 || { echo "Grupi loomine ebaõnnestus!" ; exit 1; }
+    addgroup --system "$2" || { echo "Grupi loomine ebaõnnestus!" ; exit 1; }
 else
     echo "Grupp on juba olemas."
 fi
@@ -72,8 +72,8 @@ fi
 #Kuna loodud kaust ja grupp sai tehtnud sudona siis tuleb omanlikkus ära muuta
 #selleks, et tehtud grupp saaks kausta kasutada.
 
-sudo chown $USER:$2 $1
-sudo chmod g+w $1
+sudo chown "$USER":"$2" "$1"
+sudo chmod g+w "$1"
 
 
 #Teeb samba configuratsioonifailist koopia    
